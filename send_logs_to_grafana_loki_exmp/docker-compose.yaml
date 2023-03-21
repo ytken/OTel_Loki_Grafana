@@ -1,0 +1,31 @@
+version: "3"
+
+networks:
+  loki:
+
+services:
+  loki:
+    image: grafana/loki:latest
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - loki
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.33
+    ports:
+    - 16686:16686    # frontend
+    - 14250:14250    # model.proto
+
+  grafana:
+    image: grafana/grafana:latest
+    environment:
+      - "GF_AUTH_DISABLE_LOGIN_FORM=true"
+      - "GF_AUTH_ANONYMOUS_ENABLED=true"
+      - "GF_AUTH_ANONYMOUS_ORG_ROLE=Admin"
+    ports:
+      - "3000:3000"
+    networks:
+      - loki
+
