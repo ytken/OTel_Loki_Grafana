@@ -61,7 +61,7 @@ docker exec -it <container_id> bash
 
 ### 5
 Для запуска тестов создадим новый Pipeline в Jenkins и запустим следующий код:
-```
+```Groovy
 pipeline {
     agent any
 
