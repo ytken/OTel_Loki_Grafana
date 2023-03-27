@@ -1,0 +1,54 @@
+receivers:
+  filelog:
+    include: [./test_logs/*.log]
+  otlp:
+    protocols:
+      grpc:
+
+processors:
+  attributes:
+    actions:
+    - action: insert
+      key: event_domain
+      from_attribute: event.domain
+    - action: insert
+      key: loki.attribute.labels
+      value: event_domain
+
+  attributes/2:
+    actions:
+    - action: insert
+      key: log_file_name
+      from_attribute: log.file.name
+    - action: insert
+      key: loki.attribute.labels
+      value: log_file_name
+
+  resource:
+    attributes:
+    - action: insert
+      key: service_name
+      from_attribute: service.name
+    - action: insert
+      key: service_namespace
+      from_attribute: service.namespace
+    - action: insert
+      key: loki.resource.labels
+      value: service_name, service_namespace
+
+exporters:
+  logging:
+
+  loki:
+    endpoint: "http://localhost:3100/loki/api/v1/push"
+
+service:
+  pipelines:
+    logs:
+      receivers: [otlp]
+      processors: [resource, attributes]
+      exporters: [loki, logging]
+    logs/2:
+      receivers: [filelog]
+      processors: [attributes/2]
+      exporters: [loki, logging]
