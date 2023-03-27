@@ -5,15 +5,14 @@
 * Opentelemetry Collector (OTelCol)
 * Loki Grafana
 * Grafana
-* Jaeger
+
 ## Принцип работы
 OTelCol принимает данные из двух источников: 
 * Jenkins pipeline по протоколу GRPC 
 * файлы в локальной директории
 
 OTelCol затем отсылает эти данные для визуализации:
-* информации типа traces в Jaeger
-* информации типа logs в Loki
+* информации типа logs в Grafana через Loki
 
 Подробнее о том, что входит в эти типы: https://opentelemetry.io/docs/concepts/signals/
 
@@ -42,16 +41,6 @@ docker container ls
 ```
 
 ### 3
-Контейнер OTelCol в данном примере запускается из image. Для начала распакуем `otelcol-contrib_0.63.1_linux_amd64.tar.gz`:
-```
-gunzip -c otelcol-contrib_0.63.1_linux_amd64.tar.gz | tar xopf -
-```
-Затем запустим с использованием файла конфигурации:
-```
-./otelcol-contrib --config ./otel-config.yaml
-```
-
-### 4
 Файл с тестами `test_capitalize.py` необходимо запустить в Jenkins. Одним из способов сделать это является перенос файла в рабочую директорию пайплайна.
 Зайти в рабочее пространство Jenkins можно командой:
 ```
@@ -59,7 +48,7 @@ docker exec -it <container_id> bash
 ```
 Узнать путь до рабочей директории можно в Jenkins UI. 
 
-### 5
+### 4
 Для запуска тестов создадим новый Pipeline в Jenkins и запустим следующий код:
 ```Groovy
 pipeline {
